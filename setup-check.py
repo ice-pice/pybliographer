@@ -45,19 +45,20 @@ for pair in map (None, version, testversion):
 err = None
 
 try:
-    import pygtk
+    import gi
 	
-    pygtk.require ('2.0')
+    gi.require_version('Gtk', '3.0')
     
-    import gnome, gtk
-    import gtk.glade
-    import gnome.ui
-    import gconf
+    #import gnome
+    from gi.repository import Gtk
+    #import Gtk.glade   #### -> GTK3 objects don't have a glade property. Gtk.Builder() does the work.
+    #import gnome.ui
+    from gi.repository import GConf
 
-    v = string.join (map (str, gtk.pygtk_version), '.')
+    v = string.join (map (str, (Gtk.get_major_version(), Gtk.get_minor_version(),Gtk.get_micro_version())), '.')
 
     fd = open ('conftest.out', 'a')
-    fd.write ('PyGtk_Version="%s"\n' % v)
+    fd.write ('Gtk_Version="%s"\n' % v)
     fd.close ()
 
     
@@ -87,8 +88,8 @@ except:
     error ('unexpected error')
 
 else:
-    if gtk.pygtk_version < (2,14,0):
-        error ('requested version for PyGtk is %s, but I detected %s' % ('2.14.0', v))
+    if (Gtk.get_major_version(), Gtk.get_minor_version(),Gtk.get_micro_version()) < (3,4,2):
+        error ('requested version for Gtk is %s, but I detected %s' % ('3.4.2', v))
 
 
 try:
